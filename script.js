@@ -7,6 +7,8 @@ let zoomOpen = false;
 let opereAudio = null;
 let opereAudioSource = "";
 let sharedOpereAudioSource = "";
+let touchStartX = 0;
+let touchEndX = 0;
 
 const zoomOverlay = document.createElement("div");
 zoomOverlay.id = "image-zoom-overlay";
@@ -290,6 +292,30 @@ document.addEventListener("click", (event) => {
 });
 
 zoomOverlay.addEventListener("click", closeImageZoom);
+
+document.addEventListener("touchstart", (event) => {
+	touchStartX = event.changedTouches[0].clientX;
+}, false);
+
+document.addEventListener("touchend", (event) => {
+	if (zoomOpen) {
+		return;
+	}
+
+	touchEndX = event.changedTouches[0].clientX;
+	const swipeDistance = touchStartX - touchEndX;
+	const minSwipeDistance = 50;
+
+	if (Math.abs(swipeDistance) < minSwipeDistance) {
+		return;
+	}
+
+	if (swipeDistance > 0) {
+		nextSlide();
+	} else {
+		prevSlide();
+	}
+}, false);
 
 audioToggleButton.addEventListener("click", () => {
 	if (!opereAudio || !opereAudioSource) {
